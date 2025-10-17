@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./../../../../prismaClient"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://joao:dev123@localhost:5432/agenda_db"
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  phoneNumber String?   @map("phone_number")
+  email       String?
+  password    String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @map("updated_at")
+  
+  //relations
+  refreshToken RefreshToken?
+
+  @@map("users")
+}
+
+model RefreshToken {
+  rtid         String @id
+  userId       Int    @unique
+  user         User   @relation(fields: [userId], references: [id])
+  refreshToken String
+
+  @@map("refresh_token")
+}
